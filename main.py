@@ -7,27 +7,24 @@ import nltk
 import sqlite3
 
 
-
 def main():
 	inputs = parseLines()
-	
 	tagNameEntity(inputs)
 
 
 def parseLines():
-	with open('sample_sentences2.txt', 'r') as f:
+	with open('sample_sentences.txt', 'r') as f:
 	    data = [line.strip()[5:] for line in f]
 	return data
 
+
 def tagNameEntity(sentences):
-	
 	try:
 		for sentence in sentences:
 		    tokens = nltk.word_tokenize(sentence)
 		    tagged = nltk.pos_tag(tokens)
 		    # nltk.ne_chuck() is a classifier that has already been trained to recognize named entities 
 		    entities = nltk.chunk.ne_chunk(tagged)
-
 		    print entities
 	except Exception, e:
 		print str(e)

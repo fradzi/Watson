@@ -1,14 +1,14 @@
 (1a) Is Rome the capital of Italy?
 (1b) Is France in Europe?
 (1c) Is the Pacific deeper than the Atlantic?
-(1d) Did Neeson star in Schindler’s List?
+(1d) Did Neeson star in Schindler's List?
 (1e) Did Swank win the oscar in 2000?
 (1f) Is the Shining by Kubrik?
 (1g) Did a French actor win the oscar in 2012?
 (1h) Did a movie by Spielberg with Neeson win the oscar for best film?
 (1i) Did Madonna sing PapaDoNotPreach?
 (1j) Does the album Thriller include the track BeatIt?
-(1k) Was Beyonce’ born in the USA?
+(1k) Was Beyonce' born in the USA?
 (2a) Who directed Hugo?
 (2b) Which is the scary movie by Kubrik with Nicholson?
 (2c) Who won the oscar for the best actor in 2005?
