@@ -20,13 +20,17 @@ def parseLines():
 	return data
 
 def tagNameEntity(sentences):
-	for sentence in sentences:
-	    tokens = nltk.word_tokenize(sentence)
-	    tagged = nltk.pos_tag(tokens)
-	    # nltk.ne_chuck() is a classifier that has already been trained to recognize named entities 
-	    entities = nltk.chunk.ne_chunk(tagged)
+	
+	try:
+		for sentence in sentences:
+		    tokens = nltk.word_tokenize(sentence)
+		    tagged = nltk.pos_tag(tokens)
+		    # nltk.ne_chuck() is a classifier that has already been trained to recognize named entities 
+		    entities = nltk.chunk.ne_chunk(tagged)
 
-	    print entities
+		    print entities
+	except Exception, e:
+		print str(e)
 
 
 if __name__ == "__main__":
