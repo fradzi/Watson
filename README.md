@@ -44,6 +44,3 @@ Write a brief report summarizing the components and implementation of the projec
 - Work in pairs
 - Should be developed in Java or Python
 - Use one of the following parsers: Stanford (Java), OpenNLP (Java), or NLTK (Python)
-
----
-####Sample inputs

@@ -5,7 +5,14 @@ Watson Jr.
 '''
 
 def main():
-	print 'Hello World!'
+	inputs = parseLines()
+
+
+
+def parseLines():
+	with open('sample_sentences.txt', 'r') as f:
+	    data = [line.strip()[5:] for line in f]
+	return data
 
 
 if __name__ == "__main__":
