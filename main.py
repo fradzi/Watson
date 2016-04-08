@@ -10,6 +10,8 @@ from domainTags import *
 import os
 from nltk.parse import stanford
 
+from itertools import izip
+
 # For user to change
 # USERSTANFORDDIR = '/Users/fr/Downloads'  # for Filip
 USERSTANFORDDIR = '/Users/revanthreddy/Downloads'  # for Rev
@@ -24,27 +26,32 @@ os.environ['CLASSPATH'] = STANFORDTOOLSDIR+'/stanford-parser.jar:' + STANFORDTOO
 
 def main():
 	# Extract the stanford-parser-3.3.0-models.jar file in order to set the model_path
-    parser = stanford.StanfordParser(model_path= USERSTANFORDDIR + "/stanford-parser/stanford-parser-3.3.0-models/edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
-    sentences = parser.raw_parse_sents(("Hello, My name is Melroy.", "What is your name?"))
+    # parser = stanford.StanfordParser(model_path= USERSTANFORDDIR + "/stanford-parser/stanford-parser-3.3.0-models/edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
+    # sentences = parser.raw_parse_sents(("Hello, My name is Melroy.", "What is your name?"))
 
-    # Draw tree graphic
-    for line in sentences: 
-        for sentence in line:
-            sentence.draw()
+    # # Draw tree graphic
+    # for line in sentences: 
+    #     for sentence in line:
+    #         sentence.draw()      # show tree graphic image
+    #		  print str(sentence)  # show nested tree in console
 
 
 	# Get sentences from input file
-    # inputs = parseLines()
+    inputs = parseLines()
     
     # Pass the sentences through a POS tagger
-    # taggedSentences = getPOSTags(inputs)
+    taggedSentences = getPOSTags(inputs)
 
     # Extract NE from sentences and contain into list of tuples
-    # entities = getNameEntities(taggedSentences)
+    entities = getNameEntities(taggedSentences)
 
     # Determine what catagory each sentence is in
     # getSentenceCategory(entities);
-    # getCategories(taggedSentences, entities)
+    cats = getCategories(taggedSentences, entities)
+
+    for x,y in izip(inputs, cats):
+    	print x
+    	print y
 	
 
 def parseLines():
@@ -91,10 +98,28 @@ def getCategories(tagged, entities):
 		'VBZ':True,
 		}
 
+	allcats = []
 	for sentence in tagged:
 		# For each word in sentence, save only nouns and verbs in new list
 		NounsAndVerbs = [tpl for tpl in sentence if NVs.get(tpl[1])]
-		print NounsAndVerbs
+
+		cats = [] #meow
+		for line in NounsAndVerbs:
+			c = dictCategories.get(line[0])
+			if c != None:
+				cats.append(c)
+		
+		# For ambiguous imputs
+		if len(cats) == 0:
+			allcats.append('**unknown**')
+		
+		# Save categories
+		else:
+			allcats.append(', '.join(cats))
+
+	return allcats
+
+			
 		
 
 # def getSentenceCategory(entities):

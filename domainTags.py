@@ -14,12 +14,14 @@ dictCategories = {	# 'music' tags
 					'actress': 'movies',
 					'directs': 'movies', 
 					'director': 'movies', 
+					'directors': 'movies', 
 					'directed': 'movies', 
 					'star': 'movies', 
 					'stars': 'movies',
 					'movie': 'movies', 
 					'movies': 'movies',
 					'oscar': 'movies',
+					'oscars': 'movies',
 
 					# Geography tags
 					'where': 'geophraphy', 
