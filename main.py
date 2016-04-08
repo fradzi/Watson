@@ -8,43 +8,57 @@ import sqlite3
 
 
 def main():
-	inputs = parseLines()
-	tagNameEntity(inputs)
+	# Get sentences from input file
+    inputs = parseLines()
+    
+    # Extract NE from sentences and contain into list of tuples
+    entities = extract_entities(inputs)
+
+    # Determine what catagory each sentence is in
+    #getSentenceCategory(entities);
 
 
 def parseLines():
-	with open('sample_sentences.txt', 'r') as f:
-	    data = [line.strip()[5:] for line in f]
-	return data
+    with open('sample_sentences.txt', 'r') as f:
+        data = [line.strip()[5:] for line in f]
+    return data
 
 
-def tagNameEntity(sentences):
-	try:
-		for sentence in sentences:
-		    tokens = nltk.word_tokenize(sentence)
-		    tagged = nltk.pos_tag(tokens)
-		    # nltk.ne_chuck() is a classifier that has already 
-            # been trained to recognize named entities 
-		    entities = nltk.chunk.ne_chunk(tagged)
-		    print entities
-	except Exception, e:
-		print str(e)
+def extract_entities(inputs):
+	alltuples = []
+	for sentence in inputs:
+		t = ()
+		# get name enties from each sentence and remove the for word of each sentence
+		for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sentence)))[1:]:
+			print chunk
+			#  generally identify a NE 
+			if type(chunk) is nltk.tree.Tree:
+				newline =  str(chunk)[1:-1].split()
+				newline2 = newline[1].split('/')
+				finalline = [newline[0], newline2[0], newline2[1]]
+				t = t+ (finalline,)
+			# else there are no NE then get NNP and NN
+		alltuples.append(t)
+	return alltuples
 
 
-def extract_entity_names(t):
-    entity_names = []
-
-    if hasattr(t, 'label') and t.label:
-        if t.label() == 'NE':
-            entity_names.append(' '.join([child[0] for child in t]))
-        else:
-            for child in t:
-                entity_names.extend(extract_entity_names(child))
-
-    return entity_names
-
-
-
+def getSentenceCategory(entities):
+	count=0
+	for tpl in entities:
+		count+=1
+		print '**********Sentence %s' % count
+		print tpl
+		if len(tpl) == 0:
+			print '*empty*'
+			continue
+		for word in tpl:
+			if word[0] == 'GPE':
+				print 'Geographic'
+			elif word[0] == 'ORGANIZATION':
+				print 'Organization'
+			elif word[0] == 'PERSON':
+				print 'Person'
+				
 
 
 if __name__ == "__main__":
