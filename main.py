@@ -5,7 +5,7 @@ Watson Jr.
 '''
 import nltk
 import sqlite3
-from domainTags import *
+from dicts import *
 
 import os
 from nltk.parse import stanford
@@ -85,19 +85,6 @@ def getNameEntities(sentences):
 
 
 def getCategories(tagged, entities):
-	NVs = {
-		'NN':True, 
-		'NNP':True, 
-		'NNPS':True, 
-		'NNS':True, 
-		'VB':True,
-		'VBD':True,
-		'VBG':True,
-		'VBN':True,
-		'VBP':True,
-		'VBZ':True,
-		}
-
 	allcats = []
 	for sentence in tagged:
 		# For each word in sentence, save only nouns and verbs in new list
