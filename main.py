@@ -9,6 +9,7 @@ from dicts import *
 
 import os
 from nltk.parse import stanford
+from nltk.tag import StanfordPOSTagger
 
 from itertools import izip
 
@@ -16,24 +17,28 @@ from itertools import izip
 # USERSTANFORDDIR = '/Users/fr/Downloads'  # for Filip
 USERSTANFORDDIR = '/Users/revanthreddy/Downloads'  # for Rev
 
-
+# Getting and setting class paths
 STANFORDTOOLSDIR = USERSTANFORDDIR + '/stanford-parser'
 os.environ['STANFORD_PARSER'] = STANFORDTOOLSDIR+'/stanford-parser.jar'
 os.environ['STANFORD_MODELS'] = STANFORDTOOLSDIR+'/stanford-parser-3.3.0-models.jar'
 os.environ['CLASSPATH'] = STANFORDTOOLSDIR+'/stanford-parser.jar:' + STANFORDTOOLSDIR + '/stanford-parser-3.3.0-models.jar'
 
+# Stanford tagger
+# tagger = StanfordPOSTagger(USERSTANFORDDIR + '/stanford-postagger/models/english-bidirectional-distsim.tagger', USERSTANFORDDIR + '/stanford-postagger/stanford-postagger.jar')
+# tagger = StanfordPOSTagger(USERSTANFORDDIR + '/stanford-postagger/models/english-left3words-distsim.tagger', USERSTANFORDDIR + '/stanford-postagger/stanford-postagger.jar')
+# print tagger.tag('Did a movie by Spielberg with Neeson win the oscar for best film?'.split())
 
 
 def main():
-	# Extract the stanford-parser-3.3.0-models.jar file in order to set the model_path
+	# # Extract the stanford-parser-3.3.0-models.jar file in order to set the model_path
     # parser = stanford.StanfordParser(model_path= USERSTANFORDDIR + "/stanford-parser/stanford-parser-3.3.0-models/edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
     # sentences = parser.raw_parse_sents(("Hello, My name is Melroy.", "What is your name?"))
 
     # # Draw tree graphic
     # for line in sentences: 
     #     for sentence in line:
-    #         sentence.draw()      # show tree graphic image
-    #		  print str(sentence)  # show nested tree in console
+            # sentence.draw()      # show tree graphic image
+    		# print str(sentence)  # show nested tree in console
 
 
 	# Get sentences from input file
@@ -43,15 +48,15 @@ def main():
     taggedSentences = getPOSTags(inputs)
 
     # Extract NE from sentences and contain into list of tuples
-    entities = getNameEntities(taggedSentences)
+    # entities = getNameEntities(taggedSentences)
 
     # Determine what catagory each sentence is in
-    # getSentenceCategory(entities);
-    cats = getCategories(taggedSentences, entities)
+ #    # getSentenceCategory(entities);
+    # cats = getCategories(taggedSentences, entities)
 
-    for x,y in izip(inputs, cats):
-    	print x
-    	print y
+ #    for x,y in izip(inputs, cats):
+ #    	print x
+ #    	print y
 	
 
 def parseLines():
@@ -62,9 +67,11 @@ def parseLines():
 
 def getPOSTags(sentences):
 	taggedSentences = []
+
 	for s in sentences:
 		taggedSentences.append(nltk.pos_tag(nltk.word_tokenize(s)))
 	return taggedSentences
+
 
 
 def getNameEntities(sentences):
