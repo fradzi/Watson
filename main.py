@@ -7,15 +7,19 @@ import nltk
 import sqlite3
 
 
+
 def main():
 	# Get sentences from input file
     inputs = parseLines()
     
+    # Pass the sentences through a POS tagger
+    taggedSentences = getPOSTags(inputs)
+
     # Extract NE from sentences and contain into list of tuples
-    entities = extract_entities(inputs)
+    entities = extract_entities(taggedSentences)
 
     # Determine what catagory each sentence is in
-    #getSentenceCategory(entities);
+    # getSentenceCategory(entities);
 
 
 def parseLines():
@@ -24,13 +28,19 @@ def parseLines():
     return data
 
 
-def extract_entities(inputs):
+def getPOSTags(sentences):
+	taggedSentences = []
+	for s in sentences:
+		taggedSentences.append(nltk.pos_tag(nltk.word_tokenize(s)))
+	return taggedSentences
+
+
+def extract_entities(sentences):
 	alltuples = []
-	for sentence in inputs:
+	for s in sentences:
 		t = ()
 		# get name enties from each sentence and remove the for word of each sentence
-		for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sentence)))[1:]:
-			print chunk
+		for chunk in nltk.ne_chunk(s)[1:]:
 			#  generally identify a NE 
 			if type(chunk) is nltk.tree.Tree:
 				newline =  str(chunk)[1:-1].split()
@@ -58,7 +68,6 @@ def getSentenceCategory(entities):
 				print 'Organization'
 			elif word[0] == 'PERSON':
 				print 'Person'
-				
 
 
 if __name__ == "__main__":
