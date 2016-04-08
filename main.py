@@ -51,12 +51,12 @@ def main():
     # entities = getNameEntities(taggedSentences)
 
     # Determine what catagory each sentence is in
- #    # getSentenceCategory(entities);
-    # cats = getCategories(taggedSentences, entities)
+    # getSentenceCategory(entities);
+    cats = getCategories(taggedSentences)
 
- #    for x,y in izip(inputs, cats):
- #    	print x
- #    	print y
+    for x,y in izip(inputs, cats):
+    	print x
+    	print y
 	
 
 def parseLines():
@@ -91,47 +91,47 @@ def getNameEntities(sentences):
 	return alltuples
 
 
-def getCategories(tagged, entities):
-	allcats = []
-	for sentence in tagged:
-		# For each word in sentence, save only nouns and verbs in new list
-		NounsAndVerbs = [tpl for tpl in sentence if NVs.get(tpl[1])]
+def getCategories(tagged):
+	categoriesForAllSents = []
 
-		cats = [] #meow
-		for line in NounsAndVerbs:
-			c = dictCategories.get(line[0])
-			if c != None:
-				cats.append(c)
-		
+	for taggedSentence in tagged:
+		# print sentence
+		# For each word in sentence, save only nouns and verbs in new list
+		NounsAndVerbs = [tpl for tpl in taggedSentence if NVs.get(tpl[1])]
+
+		categoriesPerSentence = [] #meow
+		for tpl in NounsAndVerbs:
+			c = dictCategories.get(tpl[0]) #Checks dictCategories if word exists
+			if c != None:				   #If it exists
+				categoriesPerSentence.append(c)			   #Save one of categories for this sentences
+
 		# For ambiguous imputs
-		if len(cats) == 0:
-			allcats.append('**unknown**')
+		if len(categoriesPerSentence) == 0:
+			categoriesForAllSents.append('**unknown**')
 		
 		# Save categories
 		else:
-			allcats.append(', '.join(cats))
+			categoriesForAllSents.append(', '.join(categoriesPerSentence))
 
-	return allcats
+	return categoriesForAllSents
 
 			
-		
-
-# def getSentenceCategory(entities):
-# 	count=0
-# 	for tpl in entities:
-# 		count+=1
-# 		print '**********Sentence %s' % count
-# 		print tpl
-# 		if len(tpl) == 0:
-# 			print '*empty*'
-# 			continue
-# 		for word in tpl:
-# 			if word[0] == 'GPE':
-# 				print 'Geographic'
-# 			elif word[0] == 'ORGANIZATION':
-# 				print 'Organization'
-# 			elif word[0] == 'PERSON':
-# 				print 'Person'
+def getNameEntity(entities):
+	count=0
+	for tpl in entities:
+		count+=1
+		print '**********Sentence %s' % count
+		print tpl
+		if len(tpl) == 0:
+			print '*empty*'
+			continue
+		for word in tpl:
+			if word[0] == 'GPE':
+				print 'Geographic'
+			elif word[0] == 'ORGANIZATION':
+				print 'Organization'
+			elif word[0] == 'PERSON':
+				print 'Person'
 
 
 if __name__ == "__main__":
