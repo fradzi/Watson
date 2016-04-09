@@ -6,7 +6,7 @@ Watson Jr.
 import nltk
 import sqlite3
 from itertools import izip
-from dicts import *
+from categories import *
 
 import os
 from nltk.parse import stanford
@@ -75,76 +75,6 @@ def getPOSTags(sentences):
 	for s in sentences:
 		taggedSentences.append(nltk.pos_tag(nltk.word_tokenize(s)))
 	return taggedSentences
-
-
-def getCategories(tagged):
-	categoriesForAllSents = []
-
-	for taggedSentence in tagged:
-		# print sentence
-		# For each word in sentence, save only nouns and verbs in new list
-		NounsAndVerbs = [tpl for tpl in taggedSentence if NVs.get(tpl[1])]
-
-		categoriesPerSentence = [] #meow
-		for tpl in NounsAndVerbs:
-			c = dictCategories.get(tpl[0]) 		# Checks dictCategories if word exists
-			if c != None:				  		# If it exists
-				categoriesPerSentence.append(c)	# Save one of categories for this sentences
-
-		# For ambiguous imputs
-		if len(categoriesPerSentence) == 0:
-			categoriesForAllSents.append(getCategoryByNameEntity(taggedSentence))
-		
-		# Save categories
-		else:
-			# categoriesForAllSents.append(', '.join(categoriesPerSentence))
-			categoriesForAllSents.append(categoriesPerSentence[0])
-
-	return categoriesForAllSents
-
-			
-def getCategoryByNameEntity(sentence):
-	# print sentence
-	entities = getNameEntities(sentence)
-
-	if len(entities) == 0:
-		return 'ambiguous'
-
-	orgsProof = []
-	sentenceWordsOnly = []
-	for word in entities:
-		if word[0] == 'GPE':
-			return 'geographic'
-		elif word[0] == 'PERSON':
-			return 'music, movies'
-		elif word[0] == 'ORGANIZATION':
-			if len(sentenceWordsOnly) == 0:
-				sentenceWordsOnly = [x[0] for x in sentence]
-
-			index = sentenceWordsOnly.index(word[1])
-			if sentence[index-1][1] == 'DT':
-				orgsProof.append(True)
-			else:
-				orgsProof.append(False)
-
-	if sum(orgsProof) == len(orgsProof):
-		return 'geographic'
-	else:
-		return 'music, movies'
-
-
-def getNameEntities(sentence):
-	t = ()
-	# get name enties from each sentence and remove the for word of each sentence
-	for chunk in nltk.ne_chunk(sentence)[1:]:
-		#  generally identify a NE 
-		if type(chunk) is nltk.tree.Tree:
-			newline =  str(chunk)[1:-1].split()
-			newline2 = newline[1].split('/')
-			finalline = [newline[0], newline2[0], newline2[1]]
-			t = t+ (finalline,)
-		# else there are no NE then get NNP and NN
-	return t
 
 
 if __name__ == "__main__":

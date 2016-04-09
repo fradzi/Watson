@@ -1,18 +1,21 @@
-NVs = {
-	'NN':True, 
-	'NNP':True, 
-	'NNPS':True, 
-	'NNS':True, 
-	'VB':True,
-	'VBD':True,
-	'VBG':True,
-	'VBN':True,
-	'VBP':True,
-	'VBZ':True,
-	}
+# All the nouns and verb POS tags found in the Penn Treebank
+dictNVs = 		{
+					'NN':True, 
+					'NNP':True, 
+					'NNPS':True, 
+					'NNS':True, 
+					'VB':True,
+					'VBD':True,
+					'VBG':True,
+					'VBN':True,
+					'VBP':True,
+					'VBZ':True,
+				}
 
 
-dictCategories = {	# 'music' tags
+# Contains keywords with very high association to specific categories
+dictCategories = {	
+					# Music keywords
 					'sing': 'music', 
 					'sings': 'music',
 					'singer': 'music', 
@@ -23,7 +26,7 @@ dictCategories = {	# 'music' tags
 					'dance': 'music',
 					'music': 'music',
 
-					# Movie tags
+					# Movie keywords
 					'actor': 'movies', 
 					'actress': 'movies',
 					'directs': 'movies', 
@@ -37,7 +40,7 @@ dictCategories = {	# 'music' tags
 					'oscar': 'movies',
 					'oscars': 'movies',
 
-					# Geography tags
+					# Geography keywords
 					'where': 'geophraphy', 
 					'capital': 'geophraphy', 
 					'country': 'geophraphy', 
