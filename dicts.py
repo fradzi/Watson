@@ -50,7 +50,10 @@ dictCategories = {	# 'music' tags
 					'border': 'geophraphy', 
 					'borders': 'geophraphy',
 					'river': 'geophraphy', 
+					'lake': 'geophraphy',
 					'sea': 'geophraphy',
+					'ocean': 'geophraphy',
+					'oceans': 'geophraphy',
 					'mountain': 'geophraphy',
 					'mountains': 'geophraphy',
 				}
