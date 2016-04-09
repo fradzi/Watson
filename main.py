@@ -3,15 +3,15 @@ Revanth Reddy
 Filip Radzikowski
 Watson Jr.
 '''
-import nltk
+import sys
 import sqlite3
+import nltk.tokenize
 from itertools import izip
 from categories import *
 
 import os
 from nltk.parse import stanford
 from nltk.tag import StanfordPOSTagger
-
 
 # For user to point to location to their stanford parser and tagger folders
 # USERSTANFORDDIR = '/Users/fr/Downloads'  # for Filip
@@ -32,50 +32,84 @@ os.environ['CLASSPATH'] = STANFORDTOOLSDIR+'/stanford-parser.jar:' + STANFORDTOO
 # print tagger.tag('Did a movie by Spielberg with Neeson win the oscar for best film?'.split())
 
 
-def main():
-    # Extract the stanford-parser-3.3.0-models.jar file in order to set the model_path
-    # parser = stanford.StanfordParser(model_path= USERSTANFORDDIR + "/stanford-parser/stanford-parser-3.3.0-models/edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
-    # Parse multiple sentences at same time
-    # sentences = parser.raw_parse_sents(("Hello, My name is Melroy.", "What is your name?"))
+def main(argv):
 
-    # # Draw tree graphic
-    # for line in sentences: 
-    #     for sentence in line:
-    #         print str(sentence)  # show nested tree in console
-    #         # sentence.draw()      # show tree graphic image
+    # For debugging in SublimeText
+    if not argv:
+        argv.append('input.txt')
 
+    # Argv error checking for single argument
+    if len(argv) != 1:
+        print 'error: missing input filename argument'
+        print 'usage: python main.py input.txt'
+        sys.exit(2)
 
     # Get sentences from input file
-    inputs = parseLines()
+    rawSentences = parseLines(argv[0])
 
-    # # Pass the sentences through a POS tagger
-    taggedSentences = getPOSTags(inputs)
+    # Pass the sentences through a POS tagger
+    taggedSentences = getPOSTags(rawSentences)
 
-    # # Extract NE from sentences and contain into list of tuples
-    # entities = getNameEntities(taggedSentences)
+    # Determine catagories of each sentence
+    categories = getCategories(taggedSentences)
 
-    # # Determine catagories of each sentence
-    # # getSentenceCategory(entities);
-    cats = getCategories(taggedSentences)
-
-    for x,y in izip(inputs, cats):
-        print x
-        print y
+    # Print output to the console
+    printOutput(rawSentences, categories)
     
 
-def parseLines():
-    with open('sample_sentences.txt', 'r') as f:
-        data = [line.strip()[5:] for line in f]
+# Open file and parse each line 
+# Accepts a string with the filename
+# Returns a list of strings with the parsed sentences
+def parseLines(inputFileName):
+    try:
+        with open(inputFileName, 'r') as f:
+            data = [line.strip() for line in f]
+    except IOError as e:
+        print "I/O error({0}): {1}".format(e.errno, e.strerror)
+        sys.exit(2)
+
     return data
 
 
+# Scans each sentence and assigns a Part of Speech (POS) tag to each word
+# Accepts a list of strings containing the raw untagged sentences
+# Returns a list of list of tuples [[(word, POS), (word, POS), ...], [(), (), ...], ...]
 def getPOSTags(sentences):
     taggedSentences = []
-
     for s in sentences:
         taggedSentences.append(nltk.pos_tag(nltk.word_tokenize(s)))
     return taggedSentences
 
 
+# Displays a formatted output to the console
+# Accepts a list of raw sentence strings and categories for each sentence
+def printOutput(sentences, categories):
+    for s,c in izip(sentences, categories):
+        print '<QUESTION> ' + s
+        print '<CATEGORY> ' + c
+        print '<PARSETREE> '
+        printTree(s)
+        print '\n=====================================================\n'
+
+
+# Uses the Stanford parser to create a parse tree and output to the console
+# Accepts a string with a raw sentence
+def printTree(sentence):
+    # Extract the stanford-parser-3.3.0-models.jar file in order to set the model_path
+    parser = stanford.StanfordParser(model_path= USERSTANFORDDIR + "/stanford-parser/stanford-parser-3.3.0-models/edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
+
+    # Parse single sentence to produce a tree object
+    tree = parser.raw_parse(sentence)
+
+    # Parse multiple sentences at same time
+    # tree = parser.raw_parse_sents(("Hello, My name is Melroy.", "What is your name?"))
+
+    # Draw tree graphic
+    for branch in tree: 
+        for node in branch:
+            print str(node)    # show nested tree in console
+            # node.draw()      # show tree graphic image in new window
+
+
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

@@ -50,7 +50,7 @@ def getCategoryByNameEntity(sentence):
     sentenceWordsOnly = []
     for word in entities:
         if word[0] == 'GPE':                    # If NE of word is geo-political entity
-            return 'geographic'                 # then sentence is related to geography
+            return 'geography'                 # then sentence is related to geography
         elif word[0] == 'PERSON':               # If NE of word is person
             return 'music, movies'              # then sentence is related to either music or movies
         elif word[0] == 'ORGANIZATION':         # If NE of word is organization
@@ -65,7 +65,7 @@ def getCategoryByNameEntity(sentence):
     # When all entities in sentence are marked ORGANIZATION and preceded by a DT, 
     # then they are related to geophraphic (e.g. 'the Atlantic')
     if sum(orgsProof) == len(orgsProof):            # [True, True] == 2
-        return 'geographic'
+        return 'geography'
     # When at least one entity does not follow the above rule, they are related to music or movies
     # Assumption is that titles of songs/movies or people are not preceded by a determiner
     # (e.g. we typically say just 'Beyonce' instead of 'the Beyonce')
