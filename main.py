@@ -33,35 +33,35 @@ os.environ['CLASSPATH'] = STANFORDTOOLSDIR+'/stanford-parser.jar:' + STANFORDTOO
 
 
 def main():
-	# Extract the stanford-parser-3.3.0-models.jar file in order to set the model_path
-	# parser = stanford.StanfordParser(model_path= USERSTANFORDDIR + "/stanford-parser/stanford-parser-3.3.0-models/edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
-	# Parse multiple sentences at same time
-	# sentences = parser.raw_parse_sents(("Hello, My name is Melroy.", "What is your name?"))
+    # Extract the stanford-parser-3.3.0-models.jar file in order to set the model_path
+    # parser = stanford.StanfordParser(model_path= USERSTANFORDDIR + "/stanford-parser/stanford-parser-3.3.0-models/edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
+    # Parse multiple sentences at same time
+    # sentences = parser.raw_parse_sents(("Hello, My name is Melroy.", "What is your name?"))
 
-	# # Draw tree graphic
-	# for line in sentences: 
-	#     for sentence in line:
-	# 		print str(sentence)  # show nested tree in console
-	#         # sentence.draw()      # show tree graphic image
+    # # Draw tree graphic
+    # for line in sentences: 
+    #     for sentence in line:
+    #         print str(sentence)  # show nested tree in console
+    #         # sentence.draw()      # show tree graphic image
 
 
-	# Get sentences from input file
-	inputs = parseLines()
+    # Get sentences from input file
+    inputs = parseLines()
 
-	# # Pass the sentences through a POS tagger
-	taggedSentences = getPOSTags(inputs)
+    # # Pass the sentences through a POS tagger
+    taggedSentences = getPOSTags(inputs)
 
-	# # Extract NE from sentences and contain into list of tuples
-	# entities = getNameEntities(taggedSentences)
+    # # Extract NE from sentences and contain into list of tuples
+    # entities = getNameEntities(taggedSentences)
 
-	# # Determine catagories of each sentence
-	# # getSentenceCategory(entities);
-	cats = getCategories(taggedSentences)
+    # # Determine catagories of each sentence
+    # # getSentenceCategory(entities);
+    cats = getCategories(taggedSentences)
 
-	for x,y in izip(inputs, cats):
-		print x
-		print y
-	
+    for x,y in izip(inputs, cats):
+        print x
+        print y
+    
 
 def parseLines():
     with open('sample_sentences.txt', 'r') as f:
@@ -70,11 +70,11 @@ def parseLines():
 
 
 def getPOSTags(sentences):
-	taggedSentences = []
+    taggedSentences = []
 
-	for s in sentences:
-		taggedSentences.append(nltk.pos_tag(nltk.word_tokenize(s)))
-	return taggedSentences
+    for s in sentences:
+        taggedSentences.append(nltk.pos_tag(nltk.word_tokenize(s)))
+    return taggedSentences
 
 
 if __name__ == "__main__":
