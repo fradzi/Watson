@@ -19,19 +19,6 @@ USERSTANFORDDIR = '/Users/revanthreddy/Downloads'  # for Rev
 # USERSTANFORDDIR = '/home/mehrdad/Downloads/Stanford/tools/'  # for TA/Linux
 
 
-# Getting and setting class paths
-STANFORDTOOLSDIR = USERSTANFORDDIR + '/stanford-parser'
-os.environ['STANFORD_PARSER'] = STANFORDTOOLSDIR+'/stanford-parser.jar'
-os.environ['STANFORD_MODELS'] = STANFORDTOOLSDIR+'/stanford-parser-3.3.0-models.jar'
-os.environ['CLASSPATH'] = STANFORDTOOLSDIR+'/stanford-parser.jar:' + STANFORDTOOLSDIR + '/stanford-parser-3.3.0-models.jar'
-
-
-# Stanford tagger (not used, but saving these commands for later if needed)
-# tagger = StanfordPOSTagger(USERSTANFORDDIR + '/stanford-postagger/models/english-bidirectional-distsim.tagger', USERSTANFORDDIR + '/stanford-postagger/stanford-postagger.jar')
-# tagger = StanfordPOSTagger(USERSTANFORDDIR + '/stanford-postagger/models/english-left3words-distsim.tagger', USERSTANFORDDIR + '/stanford-postagger/stanford-postagger.jar')
-# print tagger.tag('Did a movie by Spielberg with Neeson win the oscar for best film?'.split())
-
-
 def main(argv):
 
     # For debugging in SublimeText
@@ -95,6 +82,12 @@ def printOutput(sentences, categories):
 # Uses the Stanford parser to create a parse tree and output to the console
 # Accepts a string with a raw sentence
 def printTree(sentence):
+    # Getting and setting class paths
+    STANFORDTOOLSDIR = USERSTANFORDDIR + '/stanford-parser'
+    os.environ['STANFORD_PARSER'] = STANFORDTOOLSDIR+'/stanford-parser.jar'
+    os.environ['STANFORD_MODELS'] = STANFORDTOOLSDIR+'/stanford-parser-3.3.0-models.jar'
+    os.environ['CLASSPATH'] = STANFORDTOOLSDIR+'/stanford-parser.jar:' + STANFORDTOOLSDIR + '/stanford-parser-3.3.0-models.jar'
+
     # Extract the stanford-parser-3.3.0-models.jar file in order to set the model_path
     parser = stanford.StanfordParser(model_path= USERSTANFORDDIR + "/stanford-parser/stanford-parser-3.3.0-models/edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
 
@@ -113,3 +106,9 @@ def printTree(sentence):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
+
+
+# Stanford tagger (not used, but saving these commands for later if needed)
+# tagger = StanfordPOSTagger(USERSTANFORDDIR + '/stanford-postagger/models/english-bidirectional-distsim.tagger', USERSTANFORDDIR + '/stanford-postagger/stanford-postagger.jar')
+# tagger = StanfordPOSTagger(USERSTANFORDDIR + '/stanford-postagger/models/english-left3words-distsim.tagger', USERSTANFORDDIR + '/stanford-postagger/stanford-postagger.jar')
+# print tagger.tag('Did a movie by Spielberg with Neeson win the oscar for best film?'.split())
