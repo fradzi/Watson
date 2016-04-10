@@ -23,7 +23,7 @@ def main(argv):
 
     # For debugging in SublimeText
     if not argv:
-        argv.append('input.txt')
+        argv.append('inputPart1.txt')
 
     # Argv error checking for single argument
     if len(argv) != 1:
