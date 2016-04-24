@@ -1,8 +1,11 @@
 import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Properties;
 
+import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
@@ -40,9 +43,11 @@ public class Main {
             }
             // Close file
             bufferedReader.close();
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e) {
             System.out.println("Unable to open file '" + fileName + "'");
-        } catch(IOException ex) {
+        }
+        catch(IOException ex) {
             System.out.println("Error reading file '" + fileName + "'");
         }
         
@@ -82,9 +87,40 @@ public class Main {
         return tokenizedSentences;
     }
 
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
+    public static List<String> posTagging(String text) {
+        // create an empty Annotation just with the given text
+        Annotation document = new Annotation(text);
+
+        // run all Annotators on this text
+        pipeline.annotate(document);
+        List<CoreLabel> tokens = document.get(TokensAnnotation.class);
+
+        List<String> result = new ArrayList<String>();
+        for (CoreLabel token : tokens) {
+          // this is the text of the token
+          String pos = token.get(NamedEntityTagAnnotation.class);
+          result.add(pos);
+        }
+
+        return result;
+    }
+    
+    // Helper function to tokenize a list of sentences
+    private static List<List<String>> posTagging(List<String> rawSentences) {
+        // Create a list of lists of Strings
+        List<List<String>> taggedSentences = new ArrayList<>();
         
+        // Tokenize each sentence and save result to list
+        for (String sentence : rawSentences) {
+            List<String> tokensForOneSentence = posTagging(sentence);
+            taggedSentences.add(tokensForOneSentence);
+        }
+        
+        return taggedSentences;
+    }
+
+    
+    public static void main(String[] args) {
         // Initialize the Stanford NLP tools on program start
         initPipeline();
         
@@ -94,5 +130,7 @@ public class Main {
         // Tokenize the questions 
         List<List<String>> tokenizedSentences = tokenize(rawSentences);
         
+        // POS tagging the questions 
+        List<List<String>> taggedSentences = posTagging(rawSentences);
     }
 }
