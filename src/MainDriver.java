@@ -37,7 +37,7 @@ public class MainDriver {
                 currentQuery = new Sentence(pipeline, input);
                 createSQLStatement();
                 createAnswer();
-                printOutputs(); //TODO implement method below
+                printOutputs();
             }
         } while(!input.equalsIgnoreCase("q"));
         
@@ -48,7 +48,6 @@ public class MainDriver {
     public static void createSQLStatement() throws SQLException {
         SqlStatementBuilder ssb = new SqlStatementBuilder(currentQuery);
         sqlStatement = ssb.createSqlStatement();
-//        sqlStatement =  "SELECT count(*) FROM Person as P INNER JOIN Director D ON P.id = D.director_id WHERE P.name LIKE \"%Kubrick%\"";
     } // end createSQLStatement()
     
     public static void createAnswer() {
@@ -63,10 +62,17 @@ public class MainDriver {
             // If true/false answer
             if(currentQuery.isClosedQuestion()){
                 if (Integer.parseInt(result.trim()) > 0){
-                    answer = "TRUE";
+                    answer = "Yes";
                 }
                 else{
-                    answer = "FALSE";
+                    answer = "No";
+                }
+            } else{ // Wh- answer
+                try {
+                    answer = result.trim();
+                } catch (Exception e) {
+//                     TODO Auto-generated catch block
+                    System.err.println(e); 
                 }
             }
         }
