@@ -9,6 +9,8 @@ import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
 import edu.stanford.nlp.util.CoreMap;
@@ -18,10 +20,11 @@ public class Sentence{
     private List<String> tokenizedSentence;
     private List<String> taggedSentence;
     private List<String> nerSentence;
-    private List<Tree> parsedSentenced;
+    private List<Tree> parsedSentence;
     private StanfordCoreNLP pipeline;
     private List<CoreLabel> tokensAnnotation;
     private List<CoreMap> sentencesAnnotation;
+    private boolean isClosedQuestion;
     
     public Sentence (StanfordCoreNLP pipeline, String sentence) {
         // Set pipeline
@@ -33,11 +36,14 @@ public class Sentence{
         this.tokensAnnotation = document.get(TokensAnnotation.class);
         this.sentencesAnnotation = document.get(SentencesAnnotation.class);
         
-        // Get 
+        // Get processed values for sentence
         this.tokenizedSentence = tokenize();
         this.taggedSentence = posTagging();
         this.nerSentence = ner();
-        this.parsedSentenced = parseTree();
+        this.parsedSentence = parseTree();
+        
+        // Set sentence to yes/no type question by default
+        this.isClosedQuestion = true;
     }
     
     private Annotation getAnnotation (String sentence) {
@@ -85,8 +91,27 @@ public class Sentence{
         }
         return result;
     }
-
+    
+    // Getters and Setters
     public String getRawSentence() {
         return rawSentence;
+    }
+    public List<String> getTokenizedSentence() {
+        return tokenizedSentence;
+    }
+    public List<String> getTaggedSentence() {
+        return taggedSentence;
+    }
+    public List<String> getNerSentence() {
+        return nerSentence;
+    }
+    public List<Tree> getParsedSentence () {
+        return parsedSentence;
+    }
+    public boolean isClosedQuestion() {
+        return isClosedQuestion;
+    }
+    public void setClosedQuestion(boolean isClosedQuestion) {
+        this.isClosedQuestion = isClosedQuestion;
     }
 }
