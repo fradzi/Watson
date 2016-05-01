@@ -17,6 +17,39 @@ public class SqlStatementBuilder {
         this.WHERE = new ArrayList<String>();
     }
     
+
+    
+    public String createSqlStatement() {
+        // Get tree at Root
+        Tree t = currentQuery.getParsedSentence().get(0);
+        
+        // For Yes/No question, add Select statement to grab count
+        if (getQuestionType(t).equals("closed")) {
+            SELECT.add("SELECT COUNT(*) ");
+        } else { // set bool to false and do not add Select statement yet
+            currentQuery.setClosedQuestion(false);
+        }
+        
+        String keyPattern = getGrammaticalPattern(t); 
+        System.out.println("keyPattern  :  " +  keyPattern);
+        
+        compareKeyPattern(keyPattern);
+        
+        // Combine Select, From, Where fragments into single statement
+        StringBuilder finalQuery = new StringBuilder();
+        SELECT.forEach(x -> finalQuery.append(x));
+        FROM.forEach(x -> finalQuery.append(x));
+        WHERE.forEach(x -> finalQuery.append(x));
+        finalQuery.append(";");
+        
+        // clear for next query
+        SELECT.clear();
+        FROM.clear();
+        WHERE.clear();
+            
+        return finalQuery.toString();
+    } // end createStatement()
+    
     private String getQuestionType(Tree t){
         t = t.getChild(0); // Tree at SQ
         
@@ -34,8 +67,6 @@ public class SqlStatementBuilder {
     } // end getQuestionType()
     
     public static String getGrammaticalPattern(Tree t){
-//        System.out.println("When exists  :  " +  currentQuery.getTokenizedSentence().contains("When"));
-        
         StringBuilder s = new StringBuilder();
         
         // Peek at firstChild of Root and grab the POS tags for child nodes
@@ -79,24 +110,22 @@ public class SqlStatementBuilder {
         return s.toString();
     } // end getGrammaticalPattern()
     
-    public String createSqlStatement() {
-        // Get tree at Root
-        Tree t = currentQuery.getParsedSentence().get(0); 
-        
+    private void compareKeyPattern(String keyPattern) {
         // Get POS tagged and tokenized sentence
         List<String> taggedSentence = currentQuery.getTaggedSentence();
         List<String> tokenizedSentence = currentQuery.getTokenizedSentence();
         
-        // For Yes/No question, add Select statement to grab count
-        if (getQuestionType(t).equals("closed")) {
-            SELECT.add("SELECT COUNT(*) ");
-        } else { // set bool to false and do not add Select statement yet
-            currentQuery.setClosedQuestion(false);
+        if ( keyPattern.equals("VBZNPNP.") ){
+            String nnpName = tokenizedSentence.get(taggedSentence.indexOf("NNP"));
+            String nnName = tokenizedSentence.get(taggedSentence.indexOf("NN"));
+            
+            FROM.add("FROM Person as P ");
+            if( nnName.equals("director")){
+                FROM.add("INNER JOIN Director D ON P.id = D.director_id ");
+            } else{
+                FROM.add("INNER JOIN Actor A ON P.id = A.actor_id ");
+            }
+            WHERE.add("WHERE P.name LIKE \"%" + nnpName + "%\"");
         }
-        
-        String keyPattern = getGrammaticalPattern(t); 
-        System.out.println("keyPattern  :  " +  keyPattern);
-        
-        return "";
-    } // end createStatement()
+    }
 }
