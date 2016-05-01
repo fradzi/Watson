@@ -35,7 +35,7 @@ public class DatabaseAccess {
             }
         }
         catch(SQLException e) {  
-            System.out.println("Error: Uh oh, there was a problem while processing the sql statement. Check input query or try a different query format.");
+            System.out.println("Error5: Uh oh, there was a problem while processing the sql statement. Check input query or try a different query format.");
         }
         finally {
             try { // Close db if still open
@@ -44,7 +44,7 @@ public class DatabaseAccess {
                 }
             }
             catch(SQLException e) {
-                System.out.println("Error: Unable to close database.");
+                System.out.println("Error6: Unable to close database.");
             }
         }
         return result;

@@ -32,7 +32,10 @@ public class MainDriver {
         do {
             System.out.println("Ask a question or type 'q' to quit.");
             input = scanner.nextLine().trim();
-                    
+            if (input.isEmpty()) {
+                System.out.println("You forgot to type something.");
+                continue;
+            }
             if (!input.equalsIgnoreCase("q")) {
                 currentQuery = new Sentence(pipeline, input);
                 createSQLStatement();
@@ -82,7 +85,7 @@ public class MainDriver {
             try {
                 answer = result.trim();
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                answer = "Unable to find answer.";
             }
         }
     } // end createAnswer()
