@@ -36,8 +36,10 @@ public class MainDriver {
             if (!input.equalsIgnoreCase("q")) {
                 currentQuery = new Sentence(pipeline, input);
                 createSQLStatement();
-                createAnswer();
-                printOutputs();
+                if (!sqlStatement.equals(";")) {
+                    createAnswer();
+                    printOutputs();
+                }
             }
         } while(!input.equalsIgnoreCase("q"));
         
@@ -51,33 +53,37 @@ public class MainDriver {
     } // end createSQLStatement()
     
     public static void createAnswer() {
+        String result = null;
         try {
-            String result;
+            // Check if sql statement is valid
             if (sqlStatement.equals("")){
                 result = sqlStatement;
-            }
-            else{
+            } else{
                 result = database.processQuery(sqlStatement);
-            }
-            // If true/false answer
-            if(currentQuery.isClosedQuestion()){
-                if (Integer.parseInt(result.trim()) > 0){
-                    answer = "Yes";
-                }
-                else{
-                    answer = "No";
-                }
-            } else{ // Wh- answer
-                try {
-                    answer = result.trim();
-                } catch (Exception e) {
-//                     TODO Auto-generated catch block
-                    System.err.println(e); 
-                }
             }
         }
         catch (ClassNotFoundException e) {
-            System.err.println(e); 
+            System.out.println(e.getMessage()); 
+        }
+        
+        // If true/false answer        
+        if(currentQuery.isClosedQuestion()){
+            try {
+                if (Integer.parseInt(result.trim()) > 0){
+                    answer = "Yes";
+                } else{
+                    answer = "No";
+                }
+            } catch (Exception e){
+                answer = "Unable to find answer.";
+            } 
+
+        } else{ // Wh- answer
+            try {
+                answer = result.trim();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
     } // end createAnswer()
     

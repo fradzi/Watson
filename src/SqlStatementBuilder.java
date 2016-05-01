@@ -17,21 +17,19 @@ public class SqlStatementBuilder {
         this.WHERE = new ArrayList<String>();
     }
     
-
-    
     public String createSqlStatement() {
         // Get tree at Root
         Tree t = currentQuery.getParsedSentence().get(0);
         
         // For Yes/No question, add Select statement to grab count
         if (getQuestionType(t).equals("closed")) {
-            SELECT.add("SELECT COUNT(*) ");
+//            SELECT.add("SELECT COUNT(*) ");
         } else { // set bool to false and do not add Select statement yet
             currentQuery.setClosedQuestion(false);
         }
         
         String keyPattern = getGrammaticalPattern(t); 
-        System.out.println("keyPattern  :  " +  keyPattern);
+//        System.out.println("keyPattern  :  " +  keyPattern);
         
         compareKeyPattern(keyPattern);
         
@@ -68,7 +66,7 @@ public class SqlStatementBuilder {
     
     public static String getGrammaticalPattern(Tree t){
         StringBuilder s = new StringBuilder();
-        t.pennPrint();
+
         // Peek at firstChild of Root and grab the POS tags for child nodes
         String v = t.getChildrenAsList().get(0).value();
         if ( v.equals("S"))
@@ -334,7 +332,7 @@ public class SqlStatementBuilder {
             WHERE.add("AND O.type LIKE \"%best-" + bestCatagory + "%\" ") ;
         }
         else {
-            System.out.println("SOMETHING WENT WRONG. QUERY NOT FOUND. PLEASE DON'T FAIL ME. ");
+            System.out.println("Error: Something went wrong. Check your query format and try again.");
         }
     } // end compareKeyPattern()
 }
