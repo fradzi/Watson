@@ -47,7 +47,7 @@ public class MainDriver {
     
     public static void createSQLStatement() throws SQLException {
         SqlStatementBuilder ssb = new SqlStatementBuilder(currentQuery);
-        sqlStatement = ssb.createStatement();
+        sqlStatement = ssb.createSqlStatement();
 //        sqlStatement =  "SELECT count(*) FROM Person as P INNER JOIN Director D ON P.id = D.director_id WHERE P.name LIKE \"%Kubrick%\"";
     } // end createSQLStatement()
     

@@ -17,7 +17,7 @@ public class SqlStatementBuilder {
         this.WHERE = new ArrayList<String>();
     }
     
-    private static String getQuestionType(Tree t){
+    private String getQuestionType(Tree t){
         t = t.getChild(0); // Tree at SQ
         
         do {
@@ -33,7 +33,53 @@ public class SqlStatementBuilder {
         }
     } // end getQuestionType()
     
-    public static String createStatement() {
+    public static String getGrammaticalPattern(Tree t){
+//        System.out.println("When exists  :  " +  currentQuery.getTokenizedSentence().contains("When"));
+        
+        StringBuilder s = new StringBuilder();
+        
+        // Peek at firstChild of Root and grab the POS tags for child nodes
+        String v = t.getChildrenAsList().get(0).value();
+        if ( v.equals("S"))
+        {
+            t = t.getChild(0); // Root 
+        }
+        else if (v.equals("SQ")) {
+            t = t.getChild(0);  // get tree from SQ
+        }
+        else if (currentQuery.getTokenizedSentence().contains("When")) {
+            t = t.getChild(0);  // get tree from SQ
+            t = t.getChild(1);  // Go to SQ
+            t.getChildrenAsList().forEach(x -> s.append(x.value()));
+            t = t.getChild(2);  // Go to VP
+        }
+        else // if (!v.equals("SQ"))  WH- type
+        {
+            t = t.getChild(0);  // Go to SBARQ   
+            t = t.getChild(1);  // Go to SQ
+            t.getChildrenAsList().forEach(x -> s.append(x.value()));
+            t = t.getChild(0);  // Go to VP
+        }
+        t.getChildrenAsList().forEach(x -> s.append(x.value()));
+        
+        // Save string representing the first set of children for S or SQ parents
+        String initPattern = s.toString();
+        
+        // For cases where more than one query has same initial key pattern, go deeper into tree
+        if (initPattern.equals("VBDNPVP.")){
+            t.getChild(2).getChildrenAsList().forEach(x -> s.append(x.value()));
+        }
+        else if (initPattern.equals("VP.")){
+            t.getChild(0).getChildrenAsList().forEach(x -> s.append(x.value()));
+            if( s.toString().equals("VP.VBDNP")) {
+                t.getChild(1).getChildrenAsList().forEach(x -> s.append(x.value())); // append NN
+            }
+        }
+        
+        return s.toString();
+    } // end getGrammaticalPattern()
+    
+    public String createSqlStatement() {
         // Get tree at Root
         Tree t = currentQuery.getParsedSentence().get(0); 
         
@@ -48,6 +94,9 @@ public class SqlStatementBuilder {
             currentQuery.setClosedQuestion(false);
         }
         
-        return null;
+        String keyPattern = getGrammaticalPattern(t); 
+        System.out.println("keyPattern  :  " +  keyPattern);
+        
+        return "";
     } // end createStatement()
 }
