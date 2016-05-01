@@ -23,33 +23,33 @@ public class MainDriver {
         //Initialize Stanford NLP tools
         initPipeline();
         
-        // Greeting"
+        // Greeting
         System.out.println("Hello! My name is Watson Jr.\n");
         
         // Capture input and process query
         String input;
         Scanner scanner = new Scanner(System.in);
-        do{
+        do {
             System.out.println("Ask a question or type 'q' to quit.");
             input = scanner.nextLine().trim();
                     
-            if(!input.equalsIgnoreCase("q")){
+            if (!input.equalsIgnoreCase("q")) {
                 currentQuery = new Sentence(pipeline, input);
                 createSQLStatement();
                 createAnswer();
                 printOutputs(); //TODO implement method below
             }
-        }while(!input.equalsIgnoreCase("q"));
+        } while(!input.equalsIgnoreCase("q"));
         
         scanner.close();
         System.out.println("Goodbye.");
-    }
+    } // end main()
     
     public static void createSQLStatement() throws SQLException {
-        // Concatenate query and return string query
-//        sqlQuery = createQuery();
-        sqlStatement =  "SELECT count(*) FROM Person as P INNER JOIN Director D ON P.id = D.director_id WHERE P.name LIKE \"%Kubrick%\"";
-    }
+        SqlStatementBuilder ssb = new SqlStatementBuilder(currentQuery);
+        sqlStatement = ssb.createStatement();
+//        sqlStatement =  "SELECT count(*) FROM Person as P INNER JOIN Director D ON P.id = D.director_id WHERE P.name LIKE \"%Kubrick%\"";
+    } // end createSQLStatement()
     
     public static void createAnswer() {
         try {
@@ -73,12 +73,12 @@ public class MainDriver {
         catch (ClassNotFoundException e) {
             System.err.println(e); 
         }
-    }
+    } // end createAnswer()
     
     public static void printOutputs(){
         System.out.println("<QUERY>\n" + currentQuery.getRawSentence());
         System.out.println("<SQL>\n" + sqlStatement);
         System.out.println("<ANSWER>\n" + answer);
         System.out.println();
-    }
+    } // end printOutputs()
 }
