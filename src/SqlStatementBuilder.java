@@ -17,13 +17,17 @@ public class SqlStatementBuilder {
         this.WHERE = new ArrayList<String>();
     }
     
+    /* Create an SQL statement by analyzing the query using the parse tree and sentence structure
+     * Accepts no parameters
+     * Returns a string with the entire SQL statement
+     */
     public String createSqlStatement() {
         Tree t = null;
         // Get tree at Root
         try {
             t = currentQuery.getParsedSentence().get(0);
         } catch (Exception e) {
-            System.out.println("Error1: Check your query format. Might be missing words that help me understand your question.");
+            System.out.println("Error1: Check your query format. Might be missing words that help me understand your question.\n");
             return ";";
         }
         // For Yes/No question, add Select statement to grab count
@@ -57,6 +61,11 @@ public class SqlStatementBuilder {
         return finalQuery.toString();
     } // end createStatement()
     
+    /* Traverses the parse tree to find the verb and then determine if it is
+     * an Yes/No (closed) question or Wh- (open) question 
+     * Accepts no parameters
+     * Returns a string indicating the question type
+     */
     private String getQuestionType(Tree t){
         t = t.getChild(0); // Tree at SQ
         
@@ -101,7 +110,7 @@ public class SqlStatementBuilder {
                 t = t.getChild(0);  // Go to VP
             }
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Error2: Check your query format. Might be missing words that help me understand your question.");
+            System.out.println("Error2: Check your query format. Might be missing words that help me understand your question.\n");
             return "";
         }
         t.getChildrenAsList().forEach(x -> s.append(x.value()));
@@ -123,6 +132,11 @@ public class SqlStatementBuilder {
         return s.toString();
     } // end getGrammaticalPattern()
     
+    /*
+     * Takes a condensed movie name from the query and splits the words apart
+     * Accepts a string with the camel case movie name
+     * Returns a string with the words separated by spaces
+     */
     public static String splitMovieName (String movie) {
         StringBuilder str = new StringBuilder();
         
@@ -138,9 +152,15 @@ public class SqlStatementBuilder {
                 str.append(c);
             }
         }
+//        System.out.println(str.toString());
         return str.toString();
     }
     
+    /*
+     * Uses the keypattern and relevant nouns in the query compile the SELECT/FROM/WHERE fragments
+     * Accepts keypattern string representing the parse tree structure
+     * Returns nothing, sql fragments are saved in the class members lists
+     */
     private void compareKeyPattern(String keyPattern) {
         // Get POS tagged and tokenized sentence
         List<String> taggedSentence = currentQuery.getTaggedSentence();
@@ -159,7 +179,7 @@ public class SqlStatementBuilder {
                 }
                 WHERE.add("WHERE P.name LIKE \"%" + nnpName + "%\"");
             } 
-            else if (keyPattern.equals("VBZNPADVPNP.")){ // Is MightyAphrodite by Allen? True
+            else if (keyPattern.equals("VBZNPADVPNP.") || keyPattern.equals("VP.VBZNP")){ // Is MightyAphrodite by Allen? True
                 int i = taggedSentence.indexOf("NN");
                 if (i < 0)
                     i = taggedSentence.indexOf("NNP");
@@ -171,8 +191,8 @@ public class SqlStatementBuilder {
                 FROM.add("FROM Person as P ");
                 FROM.add("INNER JOIN Director D on D.director_id = P.id ");
                 FROM.add("INNER JOIN Movie M on D.movie_id = M.id ");
-                WHERE.add("WHERE P.name LIKE \"%" + nnpDirectorName + "%\"");
-                WHERE.add("and M.name LIKE \"%" + splitMovieName(nnpMovieName) + "%\"");
+                WHERE.add("WHERE P.name LIKE \"%" + nnpDirectorName + "%\" ");
+                WHERE.add("AND M.name LIKE \"%" + splitMovieName(nnpMovieName) + "%\"");
             } 
             else if (keyPattern.equals("VBDNPVP.VBNPP")){ //Was Loren born in Italy? True
                 int i = taggedSentence.indexOf("NNP");
@@ -182,15 +202,15 @@ public class SqlStatementBuilder {
                 String nnpLocation = tokenizedSentence.get(taggedSentence.indexOf("NNP"));
                 
                 FROM.add("FROM Person as P ");
-                WHERE.add("WHERE P.name LIKE \"%" + nnpName + "%\"");
-                WHERE.add("and P.pob LIKE \"%" + nnpLocation + "%\"");
+                WHERE.add("WHERE P.name LIKE \"%" + nnpName + "%\" ");
+                WHERE.add("AND P.pob LIKE \"%" + nnpLocation + "%\"");
             }
             else if (keyPattern.equals("VBDNPPP.") || keyPattern.equals("VBDNPSBAR.")) { // Was Birdman the best movie in 2015? True
                 String nnpName = tokenizedSentence.get(taggedSentence.indexOf("NNP"));
                 String cd = tokenizedSentence.get(taggedSentence.indexOf("CD"));
                 String bestCatagory = tokenizedSentence.get(tokenizedSentence.indexOf("best")+1);
                 
-                WHERE.add("WHERE name LIKE \"%" + nnpName + "%\"");
+                WHERE.add("WHERE name LIKE \"%" + nnpName + "%\" ");
                 WHERE.add("AND O.year LIKE \"%" + cd + "%\"") ;
                 
                 if ( bestCatagory.equals("actor") || bestCatagory.equalsIgnoreCase("actress") 
@@ -229,8 +249,8 @@ public class SqlStatementBuilder {
                 FROM.add("FROM Person as P ");
                 FROM.add("INNER JOIN Actor A on P.id = A.actor_id ");
                 FROM.add("INNER JOIN Movie M on A.movie_id = M.id ");
-                WHERE.add("WHERE P.name LIKE \"%" + nnpName + "%\"");
-                WHERE.add("and M.name LIKE \"%" + splitMovieName(nnpMovieName) + "%\"") ;
+                WHERE.add("WHERE P.name LIKE \"%" + nnpName + "%\" ");
+                WHERE.add("AND M.name LIKE \"%" + splitMovieName(nnpMovieName) + "%\"") ;
             }
             else if (keyPattern.equals("VBDNPVP.VBNP")){
                 int i = taggedSentence.indexOf("NNP");
@@ -241,7 +261,7 @@ public class SqlStatementBuilder {
                    
                    FROM.add("FROM Person as P ");
                    FROM.add("INNER JOIN Oscar O on P.id = O.person_id ");
-                   WHERE.add("WHERE P.pob LIKE \"%" + jj.substring(0, 2) + "%\"");
+                   WHERE.add("WHERE P.pob LIKE \"%" + jj.substring(0, 2) + "%\" ");
                    WHERE.add("AND O.year LIKE \"%" + cd + "%\"");
                 }
                 else{        // Did Swank win the oscar in 2000? True
@@ -250,22 +270,22 @@ public class SqlStatementBuilder {
                    
                    FROM.add("FROM Person as P ");
                    FROM.add("INNER JOIN Oscar O on P.id = O.person_id ");
-                   WHERE.add("WHERE name LIKE \"%" + nnpName + "%\"");
+                   WHERE.add("WHERE name LIKE \"%" + nnpName + "%\" ");
                    WHERE.add("AND O.year LIKE \"%" + cd + "%\"");
                 }
             }
-            else if (keyPattern.equals("SVP.")){ // Did a movie with Neeson win the oscar for best film? False
+            else if (keyPattern.equals("SVP.")){ // Did a movie with Winslet win the oscar for best film? True
                 String nnpName = tokenizedSentence.get(taggedSentence.indexOf("NNP"));
                 String bestCatagory = tokenizedSentence.get(tokenizedSentence.indexOf("best")+1);
                 
-                if( bestCatagory.equals("movie")|| bestCatagory.equals("film")){
+                if( bestCatagory.equals("movie") || bestCatagory.equals("film")){
                     bestCatagory =  "picture";
                 }
                 
-                FROM.add("FROM Person as P ");
-                FROM.add("INNER JOIN Oscar O on P.id = O.person_id ");
+                FROM.add("FROM Actor as A " );
+                FROM.add("INNER JOIN (SELECT movie_id FROM Oscar WHERE type LIKE \"%best-" + bestCatagory + "%\") T ON T.movie_id = A.movie_id ");
+                FROM.add("INNER JOIN Person P on P.id = A.actor_id ");
                 WHERE.add("WHERE P.name LIKE \"%" + nnpName + "%\"");
-                WHERE.add("AND O.type LIKE \"%best-" + bestCatagory + "%\" ");
             }
             else if (keyPattern.equals("VPVBDNP")){
                 int i = taggedSentence.indexOf("NNP");
@@ -293,7 +313,7 @@ public class SqlStatementBuilder {
                         FROM.add("INNER JOIN Director D on P.id = D.director_id ");
                         FROM.add("INNER JOIN Oscar O on D.movie_id = O.movie_id ");
                         FROM.add("INNER JOIN Actor A on A.movie_id = O.movie_id ");
-                        WHERE.add("WHERE O.year LIKE \"%" + cd + "%\"") ;
+                        WHERE.add("WHERE O.year LIKE \"%" + cd + "%\" ") ;
                         WHERE.add("AND O.type LIKE \"%best-" + bestCatagory + "%\"");
                     }
                 } else { // NNP exists;  Who directed Schindler’s List? Steven Spielberg
@@ -310,8 +330,7 @@ public class SqlStatementBuilder {
                 String cd = tokenizedSentence.get(taggedSentence.indexOf("CD"));
                 String bestCatagory = tokenizedSentence.get(tokenizedSentence.indexOf("best")+1);
                 
-                // TODO: error handling
-                if( bestCatagory.equals("movie")|| bestCatagory.equals("film") || bestCatagory.equals("picture") ){
+                if( bestCatagory.equals("movie")|| bestCatagory.equals("film") || bestCatagory.equals("picture")){
                     return;
                 }
                 
@@ -325,6 +344,7 @@ public class SqlStatementBuilder {
                 String bestCatagory = tokenizedSentence.get(tokenizedSentence.indexOf("Which")+1);
                 
                 WHERE.add("WHERE O.year LIKE \"%" + cd + "%\"") ;
+                
                 // person;  Which actress won the oscar in 2012? Meryl Streep
                 if ( bestCatagory.equals("actor") || bestCatagory.equalsIgnoreCase("actress") 
                      || bestCatagory.equalsIgnoreCase("supporting") || bestCatagory.equals("director") ){
@@ -357,14 +377,14 @@ public class SqlStatementBuilder {
                 FROM.add("FROM Person as P " );
                 FROM.add("INNER JOIN Oscar O on P.id = O.person_id ");
                 WHERE.add("WHERE name LIKE \"%"  + nnpName + "%\" ");
-                WHERE.add("AND O.type LIKE \"%best-" + bestCatagory + "%\" ") ;
+                WHERE.add("AND O.type LIKE \"%best-" + bestCatagory + "%\"") ;
             }
             else {
-                System.out.println("Error3: Something went wrong. Check your query format and try again.");
+                System.out.println("Error3: Something went wrong. Check your query format and try again.\n");
             }
         }
         catch (Exception e) {
-            System.out.println("Error4: Check your query format. Might be missing words that help me understand your question.");
+            System.out.println("Error4: Check your query format. Might be missing words that help me understand your question.\n");
             SELECT.clear(); WHERE.clear(); FROM.clear();
         }
     } // end compareKeyPattern()

@@ -7,6 +7,11 @@ import java.sql.Statement;
 public class DatabaseAccess {
     private ResultSet resultSet;
     
+    /*
+     * Processes an SQL query by searching a movie database and retrieving the result
+     * Accepts a string containing the SQL statement
+     * Returns a string with the SQL result
+     */
     public String processQuery(String query) throws ClassNotFoundException {
         StringBuilder row = new StringBuilder(); 
         String result = null;
