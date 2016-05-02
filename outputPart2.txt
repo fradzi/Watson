@@ -1,0 +1,9 @@
+<QUERY>Was Spencer the best supporting actress in 2012?<SQL>SELECT COUNT(*) FROM Person as P INNER JOIN Actor A on P.id = A.actor_id INNER JOIN Oscar O on P.id = O.person_id WHERE name LIKE "%Spencer%"AND O.year LIKE "%2012%"AND O.type LIKE "%best- supporting-actress%";<ANSWER>Yes
+
+<QUERY>Was Winslet born in England?<SQL>SELECT COUNT(*) FROM Person as P WHERE P.name LIKE "%Winslet%"and P.pob LIKE "%England%";<ANSWER>Yes
+
+<QUERY>Is Terminator2:JudgementDay by Redmayne?<SQL>SELECT COUNT(*) FROM Person as P INNER JOIN Director D on D.director_id = P.id INNER JOIN Movie M on D.movie_id = M.id WHERE P.name LIKE "%Redmayne%"and M.name LIKE "%Terminator 2%";<ANSWER>No
+
+<QUERY>When did DiCaprio win an oscar for best actor?<SQL>SELECT O.year FROM Person as P INNER JOIN Oscar O on P.id = O.person_id WHERE name LIKE "%DiCaprio%" AND O.type LIKE "%best- actor%" ;<ANSWER>Unable to find answer.(Note: DiCaprio won his first Oscar in 2016, the database only has entries up to year 2015. Therefore, answer is correct response.)<QUERY>Which director won the oscar in 2014?<SQL>SELECT P.name FROM Person as P INNER JOIN Oscar O on P.id = O.person_id WHERE O.year LIKE "%2014%"AND O.type LIKE "%best- director%";<ANSWER>Alfonso Cuaron
+
+<QUERY>Who won the oscar for best actress in 2010?<SQL>SELECT P.name FROM Person as P INNER JOIN Oscar O on P.id = O.person_id WHERE O.year LIKE "%2010%" AND O.type LIKE "%best- actress%" ;<ANSWER>Sandra Bullock
